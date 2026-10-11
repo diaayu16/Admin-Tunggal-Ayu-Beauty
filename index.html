@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tunggal Ayu Beauty Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#faf5f1;color:#44352f}
+header{background:#76594d;color:white;padding:22px 6%;display:flex;justify-content:space-between;align-items:center}
+header h2{margin:0;font-family:Georgia,serif}
+header small{color:#ead8cd}
+.container{display:flex;min-height:calc(100vh - 75px)}
+nav{width:220px;background:#fff;padding:20px 12px;border-right:1px solid #eaded5}
+nav button{display:block;width:100%;padding:13px;margin-bottom:7px;border:0;border-radius:9px;background:white;color:#6c5145;text-align:left;cursor:pointer}
+nav button:hover,nav button.active{background:#f0e0d7}
+main{flex:1;padding:30px;min-width:0}
+h1{font-family:Georgia,serif;font-weight:normal}
+.page{display:none}.page.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+.card,.panel{background:white;padding:20px;border:1px solid #eee1d8;border-radius:13px}
+.card small{color:#927c70}.card h2{color:#805d4d}
+.panel{margin-bottom:20px;overflow:auto}
+button.primary{background:#795b4c;color:white;border:0;border-radius:7px;padding:11px 15px;cursor:pointer}
+button.delete{background:#f5e3e0;color:#984f48;border:0;padding:7px;border-radius:5px;cursor:pointer}
+input,select{padding:11px;border:1px solid #e4d5ca;border-radius:7px;margin:4px;max-width:100%}
+table{border-collapse:collapse;width:100%;min-width:550px;font-size:13px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #f0e6df}
+th{color:#987f71;font-size:11px}
+form{margin:15px 0;display:flex;flex-wrap:wrap;gap:7px}
+.badge{background:#f2e5dd;padding:5px 8px;border-radius:15px;font-size:11px}
+@media(max-width:800px){.container{display:block}nav{width:100%;display:flex;overflow-x:auto}nav button{min-width:max-content;width:auto;margin-right:5px}main{padding:16px}.cards{grid-template-columns:repeat(2,1fr)}header{padding:18px}}
+</style>
+</head>
+<body>
+<header>
+ <div><h2>Tunggal Ayu Beauty</h2><small>BEAUTY CARE MANAGEMENT</small></div>
+ <span>ADMIN ✧</span>
+</header>
+<div class="container">
+<nav>
+ <button class="active" onclick="page('dashboard',this)">◫ Dashboard</button>
+ <button onclick="page('booking',this)">▦ Booking Treatment</button>
+ <button onclick="page('pelanggan',this)">♙ Pelanggan</button>
+ <button onclick="page('layanan',this)">✧ Layanan</button>
+ <button onclick="page('transaksi',this)">▤ Transaksi</button>
+</nav>
+<main>
+<section id="dashboard" class="page active">
+ <p style="color:#ad7e73;letter-spacing:2px;font-size:11px">ADMINISTRATION PANEL</p>
+ <h1>Dashboard</h1>
+ <p>Kelola bisnis kecantikanmu dalam satu aplikasi.</p>
+ <div class="cards">
+  <div class="card"><small>Total Pelanggan</small><h2 id="nPelanggan">0</h2></div>
+  <div class="card"><small>Total Booking</small><h2 id="nBooking">0</h2></div>
+  <div class="card"><small>Total Layanan</small><h2 id="nLayanan">0</h2></div>
+  <div class="card"><small>Pendapatan</small><h2 id="nPendapatan">Rp0</h2></div>
+ </div>
+ <div class="panel"><h3>Booking Terbaru</h3><div id="ringkasan"></div></div>
+ <div class="panel"><h3>Layanan Beauty Care</h3><p>Totok wajah · Facial · Spa · Massage · IPL · Laser</p></div>
+</section>
+
+<section id="booking" class="page">
+ <h1>Booking Treatment</h1>
+ <div class="panel">
+  <h3>Tambah Booking</h3>
+  <form id="formBooking">
+   <input id="bNama" placeholder="Nama pelanggan" required>
+   <select id="bLayanan"></select>
+   <input id="bTanggal" type="date" required>
+   <input id="bJam" type="time" required>
+   <button class="primary">Simpan Booking</button>
+  </form>
+ </div>
+ <div class="panel"><h3>Daftar Booking</h3><div id="tBooking"></div></div>
+</section>
+
+<section id="pelanggan" class="page">
+ <h1>Data Pelanggan</h1>
+ <div class="panel">
+  <form id="formPelanggan">
+   <input id="pNama" placeholder="Nama pelanggan" required>
+   <input id="pTelepon" placeholder="Nomor telepon" required>
+   <input id="pCatatan" placeholder="Catatan treatment">
+   <button class="primary">Tambah Pelanggan</button>
+  </form>
+ </div>
+ <div class="panel"><div id="tPelanggan"></div></div>
+</section>
+
+<section id="layanan" class="page">
+ <h1>Manajemen Layanan</h1>
+ <div class="panel">
+  <form id="formLayanan">
+   <input id="lNama" placeholder="Nama layanan" required>
+   <input id="lHarga" type="number" min="0" placeholder="Harga (Rp)" required>
+   <button class="primary">Tambah Layanan</button>
+  </form>
+ </div>
+ <div class="panel"><div id="tLayanan"></div></div>
+</section>
+
+<section id="transaksi" class="page">
+ <h1>Transaksi</h1>
+ <div class="panel">
+  <form id="formTransaksi">
+   <input id="tNama" placeholder="Nama pelanggan" required>
+   <select id="tLayanan"></select>
+   <input id="tHarga" type="number" min="0" placeholder="Total pembayaran" required>
+   <select id="tMetode"><option>Tunai</option><option>Transfer</option><option>QRIS</option><option>E-wallet</option></select>
+   <button class="primary">Catat Transaksi</button>
+  </form>
+ </div>
+ <div class="panel"><div id="tTransaksi"></div></div>
+</section>
+</main>
+</div>
+
+<script>
+const awal=[
+ {nama:"Totok Wajah",harga:50000},
+ {nama:"Facial",harga:100000},
+ {nama:"Spa",harga:125000},
+ {nama:"Massage",harga:100000},
+ {nama:"IPL",harga:200000},
+ {nama:"Laser Treatment",harga:250000}
+];
+function ambil(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
+let pelanggan=ambil("ta_pelanggan",[]);
+let layanan=ambil("ta_layanan",awal);
+let booking=ambil("ta_booking",[]);
+let transaksi=ambil("ta_transaksi",[]);
+const rupiah=n=>"Rp"+Number(n||0).toLocaleString("id-ID");
+const aman=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function simpan(){
+ localStorage.setItem("ta_pelanggan",JSON.stringify(pelanggan));
+ localStorage.setItem("ta_layanan",JSON.stringify(layanan));
+ localStorage.setItem("ta_booking",JSON.stringify(booking));
+ localStorage.setItem("ta_transaksi",JSON.stringify(transaksi));
+ render();
+}
+function page(id,btn){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+}
+function tabel(headers,rows){
+ return "<table><thead><tr>"+headers.map(x=>"<th>"+x+"</th>").join("")+"</tr></thead><tbody>"+
+ (rows.length?rows.join(""):'<tr><td colspan="'+headers.length+'">Belum ada data.</td></tr>')+"</tbody></table>";
+}
+function hapus(jenis,id){
+ if(!confirm("Hapus data ini?"))return;
+ if(jenis==="p")pelanggan.splice(id,1);
+ if(jenis==="l")layanan.splice(id,1);
+ if(jenis==="b")booking.splice(id,1);
+ if(jenis==="t")transaksi.splice(id,1);
+ simpan();
+}
+function render(){
+ document.getElementById("nPelanggan").textContent=pelanggan.length;
+ document.getElementById("nBooking").textContent=booking.length;
+ document.getElementById("nLayanan").textContent=layanan.length;
+ document.getElementById("nPendapatan").textContent=rupiah(transaksi.reduce((a,x)=>a+Number(x.harga),0));
+ const options=layanan.map((x,i)=>`<option value="${i}">${aman(x.nama)} — ${rupiah(x.harga)}</option>`).join("");
+ document.getElementById("bLayanan").innerHTML=options;
+ document.getElementById("tLayanan").innerHTML=options;
+ document.getElementById("tPelanggan").innerHTML=tabel(["Nama","Telepon","Catatan","Aksi"],pelanggan.map((x,i)=>`<tr><td>${aman(x.nama)}</td><td>${aman(x.telepon)}</td><td>${aman(x.catatan||"-")}</td><td><button class="delete" onclick="hapus('p',${i})">Hapus</button></td></tr>`));
+ document.getElementById("tLayanan").insertAdjacentHTML("afterend","");
+ document.getElementById("tLayanan").innerHTML=options;
+ const rowsL=layanan.map((x,i)=>`<tr><td>${aman(x.nama)}</td><td>${rupiah(x.harga)}</td><td><button class="delete" onclick="hapus('l',${i})">Hapus</button></td></tr>`);
+ document.getElementById("tLayanan").innerHTML=tabel(["Layanan","Harga","Aksi"],rowsL);
+ document.getElementById("ringkasan").innerHTML=tabel(["Pelanggan","Layanan","Jadwal"],booking.slice(-5).reverse().map(x=>`<tr><td>${aman(x.nama)}</td><td>${aman(x.layanan)}</td><td>${aman(x.tanggal)} ${aman(x.jam)}</td></tr>`));
+ document.getElementById("tBooking").innerHTML=tabel(["Pelanggan","Layanan","Tanggal","Jam","Aksi"],booking.map((x,i)=>`<tr><td>${aman(x.nama)}</td><td>${aman(x.layanan)}</td><td>${aman(x.tanggal)}</td><td>${aman(x.jam)}</td><td><button class="delete" onclick="hapus('b',${i})">Hapus</button></td></tr>`));
+ document.getElementById("tTransaksi").innerHTML=tabel(["Tanggal","Pelanggan","Layanan","Metode","Total","Aksi"],transaksi.map((x,i)=>`<tr><td>${aman(x.tanggal)}</td><td>${aman(x.nama)}</td><td>${aman(x.layanan)}</td><td>${aman(x.metode)}</td><td>${rupiah(x.harga)}</td><td><button class="delete" onclick="hapus('t',${i})">Hapus</button></td></tr>`));
+}
+document.getElementById("formPelanggan").addEventListener("submit",e=>{
+ e.preventDefault();pelanggan.push({nama:pNama.value.trim(),telepon:pTelepon.value.trim(),catatan:pCatatan.value.trim()});e.target.reset();simpan();
+});
+document.getElementById("formLayanan").addEventListener("submit",e=>{
+ e.preventDefault();layanan.push({nama:lNama.value.trim(),harga:Number(lHarga.value)});e.target.reset();simpan();
+});
+document.getElementById("formBooking").addEventListener("submit",e=>{
+ e.preventDefault();let s=layanan[Number(bLayanan.value)];if(!s)return;
+ booking.push({nama:bNama.value.trim(),layanan:s.nama,harga:s.harga,tanggal:bTanggal.value,jam:bJam.value});
+ e.target.reset();simpan();
+});
+document.getElementById("formTransaksi").addEventListener("submit",e=>{
+ e.preventDefault();let s=layanan[Number(tLayanan.value)];if(!s)return;
+ transaksi.push({nama:tNama.value.trim(),layanan:s.nama,harga:Number(tHarga.value),metode:tMetode.value,tanggal:new Date().toLocaleDateString("id-ID")});
+ e.target.reset();simpan();
+});
+render();
+</script>
+</body>
+</html>
